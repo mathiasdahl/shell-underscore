@@ -18,7 +18,26 @@ of that, where we first use ```sed``` to operate on the output of the
 previous command, then we use ```tr``` to operate on the output of
 that.
 
+Each time you use the ```_``` syntax, a new file is created in the
+background, representing the last shell output. This means that
+```_``` will most probably represent different output every time
+(unless you for example use ```cat``` on the output, or some other
+command that does not change it.)
+
+If you want to reuse the same output in several commands, you can use
+the alternative syntax ```_x```, where ```x``` is a letter (a-z). This
+makes the last shell output to be saved to a file that never change
+its content. This can be used when you know you want to run different
+commands on some output repeated times. We call this "named" output.
+
+If you use this feature you might want to overwrite some named output
+at some point; you can do this by adding ```!``` after the letter,
+like so: ```_a!```.
+
 ## Examples
+
+Basic flow, using the output of the previous command in the next
+command:
 
 ```
 $ echo hi there!
@@ -27,6 +46,28 @@ $ sed 's/ there//' _
 hi!
 $ tr h H < _
 Hi!
+```
+
+Using "named" output with forced overwrite in the next to last command:
+
+```
+$ long and slow complex command
+foo1
+foo2
+foo3
+bar1
+bar2
+$ grep foo _a
+foo1
+foo2
+foo3
+$ grep bar _a
+bar1
+bar2
+$ grep 1 _a!
+bar1
+$ grep 2 _a
+bar2
 ```
 
 ## Installation
@@ -41,6 +82,8 @@ something like the following to your Emacs init file:
 
 (add-hook 'shell-mode-hook #'my-shell-hook)
 ```
+
+The next time you open a shell, ```shell-underscore-mode``` will be enabled.
 
 To just try it out manually, do this:
 
