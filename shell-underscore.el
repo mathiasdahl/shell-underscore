@@ -57,6 +57,15 @@
 ;; - In case you are working with real files named `_' or `_x', this mode
 ;;   might not be for you...
 
+;;; TODO
+;;
+;; - Think about using underscore + number to access the Nth previous
+;;   output (_1 would mean the last, _2 second to last, etc.)
+;;
+;; - Add commands to open the last output in an Emacs buffer as well
+;;   as inserting the real file name of a file containing the last output.
+ 
+
 ;;; Code:
 
 (defvar shell-underscore-last-output-file nil)
