@@ -1,4 +1,4 @@
-;;; shell-underscore.el --- Add _ as a shorthand in shell mode for the last shell output
+;;; shell-underscore.el --- Use _ as a shorthand in Shell mode for the last shell output
 
 ;; Copyright (C) 2022-2022  Mathias Dahl
 
@@ -73,21 +73,22 @@ be overwritten with the last result."
     file))
 
 (defun shell-underscore-save-output (text)
-  "If command ends in _, save last output TEXT to file."
-  (when (string-match "\\(.*\\) _\\($\\| \\)" text)
+  "If command includes a _, save last output TEXT to file.
+If the `_' syntax is used, the saved output is used in the next
+step of the flow when the command is transformed to use the
+temporary file containing the output."
+
+  ;; Basic case (command _)
+  (when (string-match ".* _\\($\\| \\)" text)
     (setq shell-underscore-last-output-file (shell-underscore-write-last-output)))
 
-  (when (string-match "\\(.*\\) _\\([a-z0-9]\\)\\($\\| \\)" text)
-    (setq shell-underscore-last-output-file (shell-underscore-write-last-output (match-string 2 text))))
+  ;; Persist case (command _x)
+  (when (string-match ".* _\\([a-z0-9]\\)\\($\\| \\)" text)
+    (setq shell-underscore-last-output-file (shell-underscore-write-last-output (match-string 1 text))))
 
-  (when (string-match "\\(.*\\) _\\([a-z0-9]\\)!\\($\\| \\)" text)
-    (setq shell-underscore-last-output-file (shell-underscore-write-last-output (match-string 2 text) t))))
-
-(defun shell-underscore-send-command (proc command)
-  "If command ends in _, replace with file containing last output.
-PROC is the process to send COMMAND to."
-  (let ((command (shell-underscore-transform-command command shell-underscore-last-output-file)))
-    (comint-simple-send proc command)))
+  ;; Persist overwrite case (command _x!)
+  (when (string-match ".* _\\([a-z0-9]\\)!\\($\\| \\)" text)
+    (setq shell-underscore-last-output-file (shell-underscore-write-last-output (match-string 1 text) t))))
 
 (defun shell-underscore-transform-command (command temp-file)
   "Transform COMMAND, replace _ with the TEMP-FILE."
@@ -99,10 +100,28 @@ PROC is the process to send COMMAND to."
       (message "Transformed command to: %s" transformed-command))
     transformed-command))
 
+(defun shell-underscore-send-command (proc command)
+  "If command ends in _, replace with file containing last output.
+PROC is the process to send COMMAND to."
+  (let ((command (shell-underscore-transform-command command shell-underscore-last-output-file)))
+    (comint-simple-send proc command)))
+
 (define-minor-mode shell-underscore-mode
   "Toggle shell hacks underscore mode.
 Shell hacks underscore mode let you access the last shell output
 saved in a file with the shorthand `_'.
+
+That means, you can treat `_' as if it represents a file that
+contains the last shell output.  When this feature is used, the
+`_' is replaced, behind the scenes, with the name of an actual
+file.
+
+There are many uses of this feature.  For example, you might have
+executed a long-running command and forgot to redirect the
+output, or you realize after-the-fact that you want to use the
+output in another command.  It can also be useful when you run a
+number of commands after each other, each one transforming the
+output of the former, without the need to use a pipe.
 
 Examples:
 
@@ -131,16 +150,13 @@ It's also possible to have the underscore in the middle of a command:
  baz
  $
 
-In order to work correctly, your prompt can only consist of one
-line.
-
-This saves saves you from using pipes, which can be handy if a
-command that produce the initial input takes a long time to
-execute or you cannot run it again because of its side effects.
-It also saves you from redirecting the output on beforehand.
+Note: In order to work correctly, your prompt can only consist of
+one line.  If the prompt consists of several lines, all but the last
+one will be part of the output saved in the temporary file.
 
 If you want to access a certain output file later by its real
-name, you can simply find the name in the following way:
+name (they are not removed automatically), you can find the name
+in the following way:
 
  $ ls _
  /tmp/shell-output-NHuKHW
@@ -149,12 +165,13 @@ name, you can simply find the name in the following way:
 Each time you use `_' it will be a different file that is
 used (because at each command invocation that uses the
 underscore, new output is generated and saved).  If you want to
-persist a certain output, suffix the `_' with a letter (a-z) or a
-number.  When you do that, the content in the file will not
-change if you refer to it with an underscore and that letter or
-number again and you can refer to the same file and therefore
-file content over and over again.  If you want to overwrite one
-of the named output files, add a `!' after the letter.
+persist a certain output and reuse that for several command
+invocations, suffix the `_' with a letter (a-z) or a number.
+When you do that, the content in the file will not change if you
+refer to it with an underscore and that letter or number again so
+you can refer to the same file and therefore file content over
+and over again.  If you want to overwrite one of the named output
+files, add a `!' after the letter.
 
 Example:
 
