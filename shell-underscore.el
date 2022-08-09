@@ -25,8 +25,9 @@
 
 ;;; Commentary:
 ;;
-;; This package enables the use of an underscore (`_') character as a
-;; shorthand for a temporary file containing the last shell output.
+;; This package enables the use of an underscore (`_') character in
+;; Emacs Shell mode, as a shorthand for a temporary file containing the
+;; last shell output.
 
 ;;; Usage:
 ;;
@@ -47,7 +48,14 @@
 
 ;; (remove-hook 'shell-mode-hook #'my-shell-hook)
 
-;; Please see README.md from the same repository for more documentation.
+;; Please see README.md from the same repository for more
+;; documentation.
+
+;;; Limitations:
+;;
+;; - Only one use of `_' per command invocation is supported.
+;; - In case you are working with real files named `_' or `_x', this mode
+;;   might not be for you...
 
 ;;; Code:
 
@@ -108,8 +116,8 @@ PROC is the process to send COMMAND to."
 
 (define-minor-mode shell-underscore-mode
   "Toggle shell hacks underscore mode.
-Shell hacks underscore mode let you access the last shell output
-saved in a file with the shorthand `_'.
+Shell underscore mode let you access the last shell output saved
+in a file with the shorthand `_'.
 
 That means, you can treat `_' as if it represents a file that
 contains the last shell output.  When this feature is used, the
