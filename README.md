@@ -36,7 +36,7 @@ This will enable shell-underscore-mode in your current shell mode session.
 
 ## Limitations
 
-- Only one use of `_' per command invocation is supported.
-- In case you are working with real files named `_' or `_x', this mode might not be for you...
+- Only one use of ```_``` per command invocation is supported.
+- In case you are working with real files named ```_``` or ```_x``` or similar, this mode might not be for you...
 - Only works with GNU/Linux or Unix like file systems since it is assumed there is a /tmp folder.
 
