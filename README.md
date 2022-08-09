@@ -1,6 +1,19 @@
 # shell-underscore
 
-In Emacs Shell mode, enable the use of an underscore (`_') as a shorthand in shell mode for the last shell output
+In Emacs Shell mode, enable the use of an underscore (```_```) as a
+shorthand for the last shell output.
+
+That means, you can treat ```_``` as if it represents a real file that
+contains the last shell output.  When this feature is used, the
+```_``` is replaced, behind the scenes, with the name of an actual
+file that contains the last shell output.
+
+There are many uses of this feature.  For example, you might have
+executed a long-running command and forgot to redirect the output, or
+you realize after-the-fact that you want to use the output in another
+command.  It can also be useful when you run a number of commands
+after each other, each one transforming the output of the former,
+without the need to use a pipe.
 
 ## Examples
 
