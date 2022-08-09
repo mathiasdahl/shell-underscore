@@ -42,8 +42,10 @@ command:
 ```
 $ echo hi there!
 hi there!
+
 $ sed 's/ there//' _
 hi!
+
 $ tr h H < _
 Hi!
 ```
@@ -57,16 +59,24 @@ foo2
 foo3
 bar1
 bar2
+
 $ grep foo _a
 foo1
 foo2
 foo3
+
 $ grep bar _a
 bar1
 bar2
+
 $ grep 1 _a!
 bar1
+
 $ grep 2 _a
+bar2
+
+$ cat _a
+bar1
 bar2
 ```
 
