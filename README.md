@@ -1,2 +1,2 @@
 # shell-underscore
-Add _ as a shorthand in shell mode for the last shell output
+In Emacs Shell mode, enable the use of an underscore (`_') as a shorthand in shell mode for the last shell output
