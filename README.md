@@ -13,15 +13,20 @@ executed a long-running command and forgot to redirect the output, or
 you realize after-the-fact that you want to use the output in another
 command.  It can also be useful when you run a number of commands
 after each other, each one transforming the output of the former,
-without the need to use a pipe.
+without the need to use a pipe.  The first example below is an example
+of that, where we first use ```sed``` to operate on the output of the
+previous command, then we use ```tr``` to operate on the output of
+that.
 
 ## Examples
 
 ```
-$ echo hi there
-hi there
-$ sed 's/there//' _
+$ echo hi there!
+hi there!
+$ sed 's/ there//' _
 hi!
+$ tr h H < _
+Hi!
 ```
 
 ## Installation
