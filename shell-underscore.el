@@ -28,10 +28,12 @@
 ;; This package enables the use of an underscore (`_') character as a
 ;; shorthand for a temporary file containing the last shell output.
 
-;; ;;; Usage:
+;;; Usage:
 ;;
-;; 
+;; See documentation for `shell-underscore-mode'.
 
+;;; Installation:
+;;
 ;; To enable this mode when a shell is opened, put the following in
 ;; your Emacs init file:
 
@@ -45,7 +47,7 @@
 
 ;; (remove-hook 'shell-mode-hook #'my-shell-hook)
 
-;; Please see README.md from the same repository for documentation.
+;; Please see README.md from the same repository for more documentation.
 
 ;;; Code:
 
