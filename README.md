@@ -2,6 +2,10 @@
 
 ![Screenshot of terminal input using the command cat and an underscore](/cat_.png?raw=true "cat_")
 
+If you are not running Emacs Shell mode, you can stop reading
+here. Or, perhaps if you did try it once and found it lacking, you
+might find this feature will make you want to try it again 🙂
+
 In Emacs Shell mode, enable the use of an underscore (```_```) as a
 shorthand for the last shell output.
 
