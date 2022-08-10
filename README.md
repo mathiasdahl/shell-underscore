@@ -136,5 +136,6 @@ Comint) to save the last piece of output to a file (```C-c C-s```),
 and it's not very hard to move to the text of the last output and do
 whatever you want with it. And you can of course use all the dedicated
 "Emacsified" tools that removes the need for using a shell or terminal
-in the first place (Grep, Diff, Magit/VC).
+in the first place (Grep, Diff, Magit/VC). But if you like to use the
+shell in Emacs, this feature should be a nice addition.
 
