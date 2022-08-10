@@ -128,3 +128,13 @@ This will enable shell-underscore-mode in your current shell mode session.
 - In case you are working with real files named ```_``` or ```_x``` or similar, this mode might not be for you... (or disable ```shell-underscore-mode``` when you need to)
 - Only works with GNU/Linux or Unix like file systems since it is assumed there is a /tmp folder.
 
+## Alternatives
+
+Emacs being Emacs, you can of course do all of the above without this
+little hack. There is already a command in Shell mode (or really
+Comint) to save the last piece of output to a file (```C-c C-s```),
+and it's not very hard to move to the text of the last output and do
+whatever you want with it. And you can of course use all the dedicated
+"Emacsified" tools that removes the need for using a shell or terminal
+in the first place (Grep, Diff, Magit/VC).
+
