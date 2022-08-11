@@ -69,40 +69,47 @@
 
 (defvar shell-underscore--last-output-file nil)
 
-(defun shell-underscore--maybe-make-temp-file (&optional name force)
+(defvar shell-underscore--prefix "shell-output-")
+
+(defun shell-underscore--maybe-make-temp-file (&optional name overwrite)
   "Create a temp file and return its name.
 NAME is either a letter or a number used to construct a fixed file name.
-A non nil value for FORCE forces any named file to be overwritten with
+A non nil value for OVERWRITE overwrites any named file to be overwritten with
 the last result."
   (if name
-      (let ((file (expand-file-name (concat "shell-output-" name)
+      (let ((file (expand-file-name (concat shell-underscore--prefix name)
                                     temporary-file-directory)))
         (when (or (not (file-exists-p file))
-                  force)
+                  overwrite)
           file))
-    (make-temp-file "shell-output-")))
+    (make-temp-file shell-underscore--prefix)))
 
-(defun shell-underscore--make-output-file (text &optional force)
-  "If command includes a _ or FORCE is not nil , save last output TEXT to file.
+(defvar shell-underscore--match-args
+  ;; Basic case (command _)
+  '((".* _\\($\\| \\)")
+    ;; Persist case (command _x)
+    (".* _\\([a-z0-9]\\)\\($\\| \\)" 1)
+    ;; Persist overwrite case (command _x!)
+    (".* _\\([a-z0-9]\\)!\\($\\| \\)" 1 t))
+  "Map regexp to group number and overwrite flag.")
+
+(defun shell-underscore--make-output-file (text)
+  "If command includes a _, save last output TEXT to file.
 If the `_' syntax is used, the saved output is used in the next step of
 the flow when the command is transformed to use the temporary file containing
 the output."
-  (cond (;; Basic case (command _)
-         (string-match ".* _\\($\\| \\)" text)
-         (shell-underscore--maybe-make-temp-file))
-        ;; Persist case (command _x)
-        ((string-match ".* _\\([a-z0-9]\\)\\($\\| \\)" text)
-         (shell-underscore--maybe-make-temp-file (match-string 1 text)))
-        ;; Persist overwrite case (command _x!)
-        ((string-match ".* _\\([a-z0-9]\\)!\\($\\| \\)" text)
-         (shell-underscore--maybe-make-temp-file (match-string 1 text) t))
-        (force
-         (shell-underscore--maybe-make-temp-file))))
+  (seq-some (pcase-lambda (`(,re ,group ,overwrite))
+              (when (string-match re text)
+                (shell-underscore--maybe-make-temp-file
+                 (when group
+                   (match-string group text))
+                 overwrite)))
+            shell-underscore--match-args))
 
-(defun shell-underscore-save-output (text &optional force)
+(defun shell-underscore-save-output (text)
   "Save last output TEXT to file and store its name.
 FORCE writing even if text doesn't use `_' syntax."
-  (when-let ((filename (shell-underscore--make-output-file text force)))
+  (when-let ((filename (shell-underscore--make-output-file text)))
     (comint-write-output filename)
     (setq shell-underscore--last-output-file filename)))
 
@@ -124,6 +131,7 @@ PROC is the process to send COMMAND to."
   (let ((command (shell-underscore--transform-command command shell-underscore--last-output-file)))
     (comint-simple-send proc command)))
 
+
 (defun shell-underscore--file-exists-p (filename)
   "Return FILENAME if it exists."
   (if (and filename
@@ -139,8 +147,9 @@ PROC is the process to send COMMAND to."
   "Insert the real file name of a file containing the last output.
 With a prefix FORCE argument - create an output file unconditionally."
   (interactive "P")
+  ;; Use fake comment text for generic file name
   (when force
-    (shell-underscore-save-output "" t))
+    (shell-underscore-save-output " _"))
   (when (shell-underscore--file-exists-p shell-underscore--last-output-file)
     (insert shell-underscore--last-output-file)))
 
@@ -148,8 +157,9 @@ With a prefix FORCE argument - create an output file unconditionally."
   "Open the last output in an Emacs buffer.
 With a prefix FORCE argument - create an output file unconditionally."
   (interactive "P")
+  ;; Use fake comment text for generic file name
   (when force
-    (shell-underscore-save-output "" t))
+    (shell-underscore-save-output " _"))
   (when (shell-underscore--file-exists-p shell-underscore--last-output-file)
     (find-file shell-underscore--last-output-file)))
 
