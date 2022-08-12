@@ -13,7 +13,7 @@ shorthand for the output of the last command:
 $ echo hi there!
 hi there!
 
-$ sed 's/ there//' _ <---- Magic underscore! 😮 
+$ sed 's/ there//' _ <---- Magic underscore! 😮
 hi!
 
 $ tr h H < _
@@ -110,6 +110,17 @@ something like the following to your Emacs init file:
 (add-hook 'shell-mode-hook #'my-shell-hook)
 ```
 
+If you use [use-package](https://github.com/jwiegley/use-package), the setup can look like
+
+```emacs-lisp
+(use-package shell-underscore
+  ;; if you want to install it directly from git
+  ;; :quelpa
+  ;; (shell-underscore :repo "mathiasdahl/shell-underscore" :fetcher github)
+  :load-path "path/to/shell-underscore/"
+  :hook (shell-mode . shell-underscore-mode))
+```
+
 The next time you open a shell, ```shell-underscore-mode``` will be enabled.
 
 To just try it out manually, do this:
@@ -126,7 +137,6 @@ This will enable shell-underscore-mode in your current shell mode session.
 
 - Only one use of ```_``` per command invocation is supported.
 - In case you are working with real files named ```_``` or ```_x``` or similar, this mode might not be for you... (or disable ```shell-underscore-mode``` when you need to)
-- Only works with GNU/Linux or Unix like file systems since it is assumed there is a /tmp folder.
 
 ## Alternatives
 
@@ -138,4 +148,3 @@ whatever you want with it. And you can of course use all the dedicated
 "Emacsified" tools that removes the need for using a shell or terminal
 in the first place (Grep, Diff, Magit/VC). But if you like to use the
 shell in Emacs, this feature should be a nice addition.
-
