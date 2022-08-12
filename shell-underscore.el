@@ -163,6 +163,7 @@ With a prefix FORCE argument - create an output file unconditionally."
   (when (shell-underscore--file-exists-p shell-underscore--last-output-file)
     (find-file shell-underscore--last-output-file)))
 
+;;;###autoload
 (define-minor-mode shell-underscore-mode
   "Toggle shell hacks underscore mode.
 Shell underscore mode let you access the last shell output saved
