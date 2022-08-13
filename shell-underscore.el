@@ -79,10 +79,12 @@ the last result."
   (if name
       (let ((file (expand-file-name (concat shell-underscore--prefix name)
                                     temporary-file-directory)))
+        (setq shell-underscore--last-output-file file)
         (when (or (not (file-exists-p file))
                   overwrite)
           file))
-    (make-temp-file shell-underscore--prefix)))
+    (setq shell-underscore--last-output-file
+          (make-temp-file shell-underscore--prefix))))
 
 (defvar shell-underscore--match-args
   ;; Basic case (command _)
@@ -110,8 +112,7 @@ the output."
   "Save last output TEXT to file and store its name.
 FORCE writing even if text doesn't use `_' syntax."
   (when-let ((filename (shell-underscore--make-output-file text)))
-    (comint-write-output filename)
-    (setq shell-underscore--last-output-file filename)))
+    (comint-write-output filename)))
 
 (defun shell-underscore--transform-command (command temp-file)
   "Transform COMMAND, replace _ with the TEMP-FILE."
